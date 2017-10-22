@@ -13,7 +13,8 @@ let config = {
         count: 100
     },
     player: {
-        width: 500
+        width: 500,
+        autoplay: false
     },
     rect: {
         padding: 0,

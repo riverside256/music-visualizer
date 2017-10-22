@@ -140,15 +140,15 @@ function Slider(selector, options) {
         var drag = false;
 
 
-        _self.getElement("thumb").addEventListener("mousedown", function() {
-            drag = true;
-        }, false);
+        _self.getElement("thumb").addEventListener("mousedown", function() {drag = true}, false);
+        _self.getElement("stripe").addEventListener("mousedown", function(e) {drag = true; manage(e);}, false);
 
 
 
-        function x(e) {
+        function manage(e) {
+            var dragPos;
+
             if(drag) {
-                var dragPos;
                 if(_self.direction == VERTICAL) {
                     dragPos = e.clientY - _s.stripe.getBoundingClientRect().y;
 
@@ -156,16 +156,6 @@ function Slider(selector, options) {
                         _self.setThumbValue(dragPos - (_self.getElement("thumb").offsetHeight / 2));
 
                         _percentage = 1 - ((_self.getElement("thumb").offsetTop + _self.getElement("thumb").offsetHeight / 2) / _self.getElement("stripe").offsetHeight);
-                        _self.value = (_percentage * (_self.max - _self.min)) + _self.min;
-                        if(_self.rounded) {
-                            _self.setLabel(Math.floor(_self.value));
-                        }
-                        else {
-                            _self.setLabel(_self.value.toFixed(2));
-                        }
-                        isLabelChanging(true);
-
-                        _self.callBacks.forEach(c => c(_self.value));
                     }
 
                 }
@@ -176,27 +166,29 @@ function Slider(selector, options) {
                         _self.setThumbValue(dragPos - (_self.getElement("thumb").offsetWidth / 2));
 
                         _percentage = (_self.getElement("thumb").offsetLeft + _self.getElement("thumb").offsetWidth / 2) / _self.getElement("stripe").offsetWidth;
-                        _self.value = (_percentage * (_self.max - _self.min)) + _self.min;
-                        if(_self.rounded) {
-                            _self.setLabel(Math.floor(_self.value));
-                        }
-                        else {
-                            _self.setLabel(_self.value.toFixed(2));
-                        }
-                        isLabelChanging(true);
-
-                        _self.callBacks.forEach(c => c(_self.value));
                     }
                 }
+
+
+                _self.value = (_percentage * (_self.max - _self.min)) + _self.min;
+                _self.setLabel((_self.rounded == true) ? Math.floor(_self.value) : _self.value.toFixed(2));
+                isLabelChanging(true);
+
+                _self.callBacks.forEach(c => c(_self.value));
             }
+
         }
 
 
-        _self.getElement("thumb").addEventListener("mousemove", e => x(e), false);
-        _self.getElement("stripe").addEventListener("mousemove", e => x(e), false);
-
+        _self.getElement("thumb").addEventListener("mousemove", e => manage(e), false);
 
         _self.getElement("thumb").addEventListener("mouseup", function() {
+            drag = false;
+            _self.setLabel(_self.label);
+            isLabelChanging(false);
+        }, false);
+
+        _self.getElement("stripe").addEventListener("mouseup", function() {
             drag = false;
             _self.setLabel(_self.label);
             isLabelChanging(false);

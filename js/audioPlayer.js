@@ -20,8 +20,24 @@ function AudioPlayer(selector, options) {
     this.width = _options.width || config.player.width;
     this.path = _options.path || "";
     this.trackName = "";
-    this.autoplay = (typeof _options.autoplay == "undefined") ? true : _options.autoplay;
+    this.autoplay = (typeof _options.autoplay == "undefined") ? config.player.autoplay : _options.autoplay;
 
+
+
+
+    window.addEventListener("keypress", function(e) {
+        var k = e.keyCode || e.which;
+
+        if(e.key == " ") {
+            if(_self.audio.paused) {
+                _self.play();
+            }
+            else {
+                _self.pause();
+            }
+        }
+
+    }, false);
 
 
 
@@ -87,6 +103,7 @@ function AudioPlayer(selector, options) {
         _elem.appendChild(_p.playerBox);
 
         _self.setWidth(_self.width);
+
 
         _self.audio.addEventListener("loadeddata", function() {
 

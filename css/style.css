@@ -43,13 +43,17 @@ audio {
     cursor: pointer;
     font-size: 21px;
     border-radius: 50%;
+    transition: transform .1s ease-in-out;
 }
 .audio-settings__opener .fa {
-    transition: .5s ease-in-out;
+    transition: transform .1s ease-in-out;
 }
 
 .audio-settings__opener:hover .fa {
-    transform: rotate(360deg);
+    transform: scale(1.2);
+}
+.audio-settings__opener:active {
+    transform: scale(0.8);
 }
 
 
