@@ -3,13 +3,6 @@ var audio, context, analyser, bassAnalyser, source;
 var sc;
 var c;
 
-var config = {
-    trackName: "Kid Creme feat. Shawnee Taylor - Austin's groove (let me live).mp3",
-    colors: {
-        green: "#76FF03",
-        red: "#f44336"
-    }
-}
 
 
 function random(min, max) {
@@ -37,7 +30,7 @@ function varsInit() {
     context = new AudioContext();
 
     analyser = context.createAnalyser();
-    analyser.smoothingTimeConstant = 0.1;
+    analyser.smoothingTimeConstant = config.analyser.smoothingTimeConstant;
     analyser.maxDecibels = sc.data.maxDecibels;
     analyser.minDecibels = sc.data.minDecibels;
 
@@ -141,7 +134,7 @@ var Circle = (function() {
         this.x = 0;
         this.y = 0;
         this.radius = 0;
-        this.color = green;
+        this.color = config.colors.green;
         this.lineWidth = 0;
         this.barsCount = 0;
         this.bars;
@@ -219,7 +212,7 @@ var Rectangle = (function() {
 
         this.width = 0;
         this.height = 0;
-        this.color = green;
+        this.color = config.colors.green;
         this.angle = 0;
         this.padding = 0;
         this.velocity = 0.05;

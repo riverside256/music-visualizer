@@ -17,7 +17,7 @@ function AudioPlayer(selector, options) {
 
 
     this.audio = {};
-    this.width = _options.width || 500;
+    this.width = _options.width || config.player.width;
     this.path = _options.path || "";
     this.trackName = "";
     this.autoplay = (typeof _options.autoplay == "undefined") ? true : _options.autoplay;

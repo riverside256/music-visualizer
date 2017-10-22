@@ -9,14 +9,14 @@ function SliderConfig() {
     _self = this;
 
     this.data = {
-        barsCount: 100,
-        maxDecibels: -30,
-        minDecibels: -100,
-        playerWidth: 500,
-        rectPadding: 0,
-        rectVelocity: 0.05,
-        wheelLineWidth: 1,
-        wheelRadius: 20
+        barsCount: config.bars.count,
+        maxDecibels: config.analyser.maxDecibels,
+        minDecibels: config.analyser.minDecibels,
+        playerWidth: config.player.width,
+        rectPadding: config.rect.padding,
+        rectVelocity: config.rect.velocity,
+        wheelLineWidth: config.wheel.lineWidth,
+        wheelRadius: config.wheel.radius
     };
     this.sliders = {};
 }
