@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Segoe UI;
+    box-sizing: border-box;
+    outline: none;
+}
+html, body {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+canvas {
+    background: #172030;
+}
+audio {
+    width: 100%;
+}
+
+
+.audio-box {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.audio-settings {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 100%;
+}
+
+.audio-settings__opener {
+    position: absolute;
+    right: 0;
+    width: 70px;
+    height: 70px;
+    background: #273652;
+    color: #fff;
+    text-align: center;
+    line-height: 70px;
+    cursor: pointer;
+    font-size: 21px;
+    border-radius: 50%;
+}
+.audio-settings__opener .fa {
+    transition: .5s ease-in-out;
+}
+
+.audio-settings__opener:hover .fa {
+    transform: rotate(360deg);
+}
+
+
+.audio-settings__content {
+    position: absolute;
+    top: 80px;
+    right: 0;
+    background: #273652;
+    color: #fff;
+    min-width: 220px;
+    max-height: 320px;
+    border-radius: 3px;
+    visibility: hidden;
+    overflow-y: scroll;
+    z-index: 10;
+}
+
+.settings-pane {
+    position: relative;
+    width: 100%;
+    padding: 15px 0;
+    border-bottom: 1px solid #16232f;
+}
+.settings-pane:last-child {
+    border-bottom: none;
+}
+
+.settings-pane h2 {
+    padding: 15px 20px;
+    padding-top: 0;
+}
+
+.audio-settings__content--opened {
+    visibility: visible;
+}
+
+
+.settings-pane__item {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 70px;
+    max-width: 100px;
+    padding: 0 10px;
+}
