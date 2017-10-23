@@ -1,5 +1,5 @@
 let config = {
-    trackName: "Kid Creme feat. Shawnee Taylor - Austin's groove (let me live).mp3",
+    trackName: "",
     colors: {
         green: "#76FF03",
         red: "#f44336"
