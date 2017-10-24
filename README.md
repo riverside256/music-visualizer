@@ -1,6 +1,27 @@
 # music-visualizer
 Simple music visualization cerated in HTML5 Canvas
 
+
+## Table of contents
+[1. What's new?](#whats-new)  
+[2. Setup](#setup)  
+[3. TODOS](#todos)  
+
+
+## What's new?
+
+**Version 0.2**
+- added assets.js file
+- added volume player support
+- added some documentation for javascript files
+- added audio player error handling support
+
+**Version 0.1**
+- added changing slider value on stripe clicking
+- added some animations
+- added new option to config
+- optimized slider.js file
+
 ## Setup
 1. Download this project by clicking **Clone or download** button or by using this commands
 
