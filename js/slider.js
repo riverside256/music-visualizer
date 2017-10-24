@@ -3,6 +3,11 @@ const HORIZONTAL = "horizontal";
 const VERTICAL = "vertical";
 
 
+/**
+ * This function represents the Sldier object
+ * @param {string} selector - the container selector
+ * @param {object} options  - options for slider
+ */
 function Slider(selector, options) {
 
     let _self = this;

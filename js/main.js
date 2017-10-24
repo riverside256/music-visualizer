@@ -5,12 +5,6 @@ var c;
 
 
 
-function random(min, max) {
-    return min + (Math.random() * (max - min));
-}
-
-
-
 
 
 function varsInit() {
@@ -22,10 +16,14 @@ function varsInit() {
     sc.initSliders();
 
     var ap = new AudioPlayer(".audio-player", {
-        path: "audio/" + config.trackName,
+        trackName: config.trackName,
         width: sc.data.playerWidth,
         autoplay: false
     });
+
+    if(config.trackName.trim() == "") {
+        ap.setError("Please, add track name to config file");
+    }
 
     context = new AudioContext();
 
