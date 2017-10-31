@@ -174,7 +174,7 @@ var Circle = (function() {
         for(var i = 0; i < this.barsCount; i++) {
             this.bars.left.push(
                 new Rectangle({
-                    c: c,
+                    circle: c,
                     height: 3,
                     angle: i * (180 / this.barsCount),
                     color: blendColor(config.colors.red, config.colors.green, i / this.barsCount),
@@ -184,7 +184,7 @@ var Circle = (function() {
             );
             this.bars.right.push(
                 new Rectangle({
-                    c: c,
+                    circle: c,
                     height: 3,
                     angle: 180 + (i * (180 / this.barsCount)),
                     color: blendColor(config.colors.red, config.colors.green, i / this.barsCount),
@@ -227,11 +227,11 @@ var Rectangle = (function() {
 
         this.width = _options.width || 0;
         this.height = _options.height || 0;
-        this.color = config.colors.green;
+        this.color = _options.color || config.colors.green;
         this.angle = _options.angle || 0;
         this.padding = _options.padding || 0;
         this.velocity = _options.velocity || 0.05;
-        this.circle = {};
+        this.circle = _options.circle || {};
     }
 
     Rectangle.prototype.update = function() {
