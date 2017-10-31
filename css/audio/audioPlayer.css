@@ -10,39 +10,9 @@
 
 
 .audio-player__title {
+    flex: 1 1 auto;
     padding: 20px;
     font-size: 21px;
-}
-
-
-.audio-player__btn {
-    position: relative;
-    min-width: 70px;
-    height: 70px;
-    font-size: 21px;
-    border: none;
-    background: #f4ee41;
-    color: #283753;
-    cursor: pointer;
-    transition: transform .1s ease-in-out;
-}
-.audio-player__btn .fa {
-    transform: scale(1);
-    transition: transform .1s ease-in-out;
-    pointer-events: none;
-}
-
-
-.audio-player__btn--disabled {
-    background: #ccc;
-    cursor: default;
-}
-
-.audio-player__btn:not(.audio-player__btn--disabled):hover .fa {
-    transform: scale(1.2);
-}
-.audio-player__btn:not(.audio-player__btn--disabled):active {
-    transform: scale(0.8);
 }
 
 

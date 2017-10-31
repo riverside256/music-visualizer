@@ -31,13 +31,14 @@ audio {
     width: 100%;
 }
 
-.audio-settings__opener {
+.floating-button {
     position: absolute;
     right: 0;
     width: 70px;
     height: 70px;
     background: #273652;
     color: #fff;
+    display: block;
     text-align: center;
     line-height: 70px;
     cursor: pointer;
@@ -45,14 +46,23 @@ audio {
     border-radius: 50%;
     transition: transform .1s ease-in-out;
 }
-.audio-settings__opener .fa {
+
+.floating-button--top {
+    top: 20px;
+}
+
+.floating-button--left {
+    left: 20px;
+}
+
+.floating-button .fa {
     transition: transform .1s ease-in-out;
 }
 
-.audio-settings__opener:hover .fa {
+.floating-button:hover .fa {
     transform: scale(1.2);
 }
-.audio-settings__opener:active {
+.floating-button:active {
     transform: scale(0.8);
 }
 
@@ -81,6 +91,16 @@ audio {
     border-bottom: none;
 }
 
+.settings-pane__content {
+    position: relative;
+    width: 100%;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+}
+
 .settings-pane h2 {
     padding: 15px 20px;
     padding-top: 0;
@@ -98,4 +118,58 @@ audio {
     min-width: 70px;
     max-width: 100px;
     padding: 0 10px;
+}
+
+
+
+
+
+.color-picker {
+    flex: 1 1 auto;
+    position: relative;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+
+
+
+
+
+
+.button {
+    position: relative;
+    min-width: 70px;
+    height: 70px;
+    font-size: 21px;
+    border: none;
+    background: #f4ee41;
+    color: #283753;
+    cursor: pointer;
+    transition: transform .1s ease-in-out;
+}
+.button .fa {
+    transform: scale(1);
+    transition: transform .1s ease-in-out;
+    pointer-events: none;
+}
+
+
+.button--disabled {
+    background: #ccc;
+    cursor: default;
+}
+
+.button:not(.button--disabled):hover .fa {
+    transform: scale(1.2);
+}
+.button:not(.button--disabled):active {
+    transform: scale(0.8);
 }

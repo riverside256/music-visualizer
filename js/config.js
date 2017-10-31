@@ -1,8 +1,8 @@
 let config = {
-    trackName: "",
+    trackList: [],
     colors: {
-        green: "#76FF03",
-        red: "#f44336"
+        first: "#76FF03",
+        second: "#f44336"
     },
     analyser: {
         maxDecibels: -30,

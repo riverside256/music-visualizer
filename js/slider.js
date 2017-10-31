@@ -36,10 +36,11 @@ function Slider(selector, options) {
 
     this.label = _options.label || "default";
     this.min = _options.min || 0;
-    this.max = _options.max || 0;
+    this.max = _options.max || 1;
     this.value = _options.value || this.min;
     this.rounded = (typeof _options.rounded == "undefined") ? true : _options.rounded;
     this.direction = _options.direction || VERTICAL;
+    this.disabled = (typeof(_options.disabled) == "undefined") ? false : _options.disabled;
     this.callBacks = [];
 
 
@@ -73,6 +74,12 @@ function Slider(selector, options) {
     }
 
 
+    this.enable = function() {
+        this.disabled = false;
+        this.getElement("wrapper").classList.remove("slider--disabled");
+        manageSlider();
+    }
+
 
     /*
      * creating slider markup
@@ -92,14 +99,17 @@ function Slider(selector, options) {
         _s.filling = document.createElement("div");
         _s.thumb = document.createElement("div");
 
-
         _s.wrapper.classList.add("slider", `slider--${_self.direction}`);
         _s.label.classList.add("slider__label");
         _s.stripe.classList.add("slider__stripe");
         _s.filling.classList.add("slider__filling");
         _s.thumb.classList.add("slider__thumb");
 
+        if(_self.disabled) {
+            _s.wrapper.classList.add("slider--disabled");
+        }
 
+        _s.wrapper.id = selector + "__wrapper";
         _s.label.id = selector + "__label";
         _s.stripe.id = selector + "__stripe";
         _s.filling.id = selector + "__filling";
@@ -142,63 +152,65 @@ function Slider(selector, options) {
      * adding events to the slider
      */
     var manageSlider = function() {
-        var drag = false;
+        if(!_self.disabled) {
+            var drag = false;
 
 
-        _self.getElement("thumb").addEventListener("mousedown", function() {drag = true}, false);
-        _self.getElement("stripe").addEventListener("mousedown", function(e) {drag = true; manage(e);}, false);
+            document.body.addEventListener("mousedown", function(e) {
+                if(e.target.id == _s.thumb.id) {
+                    drag = true;
+                }
+                if(e.target.id == _s.stripe.id || e.target.id == _s.filling.id) {
+                    drag = true;
+                    manage(e);
+                }
+            }, false);
 
 
 
-        function manage(e) {
-            var dragPos;
+            function manage(e) {
+                var dragPos;
 
-            if(drag) {
-                if(_self.direction == VERTICAL) {
-                    dragPos = e.clientY - _s.stripe.getBoundingClientRect().y;
+                if(drag) {
+                    if(_self.direction == VERTICAL) {
+                        dragPos = e.clientY - _s.stripe.getBoundingClientRect().y;
 
-                    if(dragPos > 0 && dragPos < _s.stripe.offsetHeight) {
-                        _self.setThumbValue(dragPos - (_self.getElement("thumb").offsetHeight / 2));
+                        if(dragPos > 0 && dragPos < _s.stripe.offsetHeight) {
+                            _self.setThumbValue(dragPos - (_self.getElement("thumb").offsetHeight / 2));
 
-                        _percentage = 1 - ((_self.getElement("thumb").offsetTop + _self.getElement("thumb").offsetHeight / 2) / _self.getElement("stripe").offsetHeight);
+                            _percentage = 1 - ((_self.getElement("thumb").offsetTop + _self.getElement("thumb").offsetHeight / 2) / _self.getElement("stripe").offsetHeight);
+                        }
+
+                    }
+                    else {
+                        dragPos = e.clientX - _s.stripe.getBoundingClientRect().x;
+
+                        if(dragPos > 0 && dragPos < _s.stripe.offsetWidth) {
+                            _self.setThumbValue(dragPos - (_self.getElement("thumb").offsetWidth / 2));
+
+                            _percentage = (_self.getElement("thumb").offsetLeft + _self.getElement("thumb").offsetWidth / 2) / _self.getElement("stripe").offsetWidth;
+                        }
                     }
 
-                }
-                else {
-                    dragPos = e.clientX - _s.stripe.getBoundingClientRect().x;
 
-                    if(dragPos > 0 && dragPos < _s.stripe.offsetWidth) {
-                        _self.setThumbValue(dragPos - (_self.getElement("thumb").offsetWidth / 2));
+                    _self.value = (_percentage * (_self.max - _self.min)) + _self.min;
+                    _self.setLabel((_self.rounded == true) ? Math.floor(_self.value) : _self.value.toFixed(2));
+                    isLabelChanging(true);
 
-                        _percentage = (_self.getElement("thumb").offsetLeft + _self.getElement("thumb").offsetWidth / 2) / _self.getElement("stripe").offsetWidth;
-                    }
+                    _self.callBacks.forEach(c => c(_self.value));
                 }
 
-
-                _self.value = (_percentage * (_self.max - _self.min)) + _self.min;
-                _self.setLabel((_self.rounded == true) ? Math.floor(_self.value) : _self.value.toFixed(2));
-                isLabelChanging(true);
-
-                _self.callBacks.forEach(c => c(_self.value));
             }
 
+
+            document.body.addEventListener("mousemove", e => manage(e), false);
+
+            document.body.addEventListener("mouseup", function() {
+                drag = false;
+                _self.setLabel(_self.label);
+                isLabelChanging(false);
+            }, false);
         }
-
-
-        _self.getElement("thumb").addEventListener("mousemove", e => manage(e), false);
-
-        _self.getElement("thumb").addEventListener("mouseup", function() {
-            drag = false;
-            _self.setLabel(_self.label);
-            isLabelChanging(false);
-        }, false);
-
-        _self.getElement("stripe").addEventListener("mouseup", function() {
-            drag = false;
-            _self.setLabel(_self.label);
-            isLabelChanging(false);
-        }, false);
-
     }
 
 
