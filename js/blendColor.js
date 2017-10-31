@@ -21,7 +21,7 @@ function blendColor(c1, c2, per) {
   }
   
   if(per < 0 || per > 1) {
-    throw new Error("Incorrect percent value. Percent value must be between 0 and 1. Current value is: ${per}");
+    throw new Error(`Incorrect percent value. Percent value must be between 0 and 1. Current value is: ${per}`);
   }
   
   

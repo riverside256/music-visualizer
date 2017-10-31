@@ -1,6 +1,7 @@
 var canvas, ctx, c_width, c_height;
 var audio, context, analyser, bassAnalyser, source;
-var sc;
+var mainArray, bassArray;
+var sc, ap;
 var c;
 
 
@@ -11,39 +12,44 @@ function varsInit() {
     canvas = document.getElementById("audio-visualizer");
     ctx = canvas.getContext("2d");
 
+    mainArray = [];
+    bassArray = [];
+
+    context = new AudioContext();
+
     sc = new SliderConfig();
     sc.initConfig();
     sc.initSliders();
 
-    var ap = new AudioPlayer(".audio-player", {
-        trackName: config.trackName,
+    ap = new AudioPlayer(".audio-player", {
         width: sc.data.playerWidth,
-        autoplay: false
+        autoplay: config.player.autoplay,
+        trackList: config.trackList
     });
 
-    if(config.trackName.trim() == "") {
-        ap.setError("Please, add track name to config file");
+    ap.audioOnLoad = function(x) {
+        mainArray = [];
+        bassArray = [];
+
+        analyser = context.createAnalyser();
+        analyser.smoothingTimeConstant = config.analyser.smoothingTimeConstant;
+        analyser.maxDecibels = sc.data.maxDecibels;
+        analyser.minDecibels = sc.data.minDecibels;
+
+        bassAnalyser = context.createAnalyser();
+        bassAnalyser.maxDecibels = 0;
+        bassAnalyser.minDecibels = -30;
+
+        source = context.createMediaElementSource(ap.audio);
+        source.connect(analyser);
+        source.connect(bassAnalyser);
+
+        analyser.connect(context.destination);
+        bassAnalyser.connect(context.destination);
+
+        mainArray = new Uint8Array(analyser.frequencyBinCount);
+        bassArray = new Uint8Array(bassAnalyser.frequencyBinCount);
     }
-
-    context = new AudioContext();
-
-    analyser = context.createAnalyser();
-    analyser.smoothingTimeConstant = config.analyser.smoothingTimeConstant;
-    analyser.maxDecibels = sc.data.maxDecibels;
-    analyser.minDecibels = sc.data.minDecibels;
-
-    bassAnalyser = context.createAnalyser();
-    bassAnalyser.maxDecibels = 0;
-    bassAnalyser.minDecibels = -30;
-
-    source = context.createMediaElementSource(ap.audio);
-    source.connect(analyser);
-    source.connect(bassAnalyser);
-
-    analyser.connect(context.destination);
-    bassAnalyser.connect(context.destination);
-
-
 
 
     sc.getSlider("barsCount").addOnChange(function(e) {
@@ -129,23 +135,21 @@ var Circle = (function() {
 
         _options = options || _options;
 
-        this.x = 0;
-        this.y = 0;
-        this.radius = 0;
+        this.x = _options.x || 0;
+        this.y = _options.y || 0;
+        this.radius = _options.radius || 0;
         this.color = config.colors.green;
-        this.lineWidth = 0;
-        this.barsCount = 0;
-        this.bars;
-        this.bassAmount = 0;
+        this.lineWidth = _options.lineWidth || 0;
+        this.barsCount = _options.barsCount || 0;
+        this.bassAmount = _options.bassAmount || 0;
 
-        this.rectPadding = 0;
-        this.rectVelocity = 0.05;
+        this.rectPadding = _options.rectPadding || 0;
+        this.rectVelocity = _options.rectVelocity || 0.01;
 
-        for(o in options) {
-            if(Reflect.has(this, o)) {
-                Reflect.set(this, o, options[o]);
-            }
-        }
+        this.bars = {
+            left: [],
+            right: []
+        };
 
     }
 
@@ -163,13 +167,26 @@ var Circle = (function() {
     }
 
     Circle.prototype.createBars = function() {
-        this.bars = [];
+        this.bars = {
+            left: [],
+            right: []
+        };
         for(var i = 0; i < this.barsCount; i++) {
-            this.bars.push(
+            this.bars.left.push(
                 new Rectangle({
                     c: c,
                     height: 3,
-                    angle: i * (360 / this.barsCount),
+                    angle: i * (180 / this.barsCount),
+                    color: blendColor(config.colors.red, config.colors.green, i / this.barsCount),
+                    padding: this.rectPadding,
+                    velocity: this.rectVelocity
+                })
+            );
+            this.bars.right.push(
+                new Rectangle({
+                    c: c,
+                    height: 3,
+                    angle: 180 + (i * (180 / this.barsCount)),
                     color: blendColor(config.colors.red, config.colors.green, i / this.barsCount),
                     padding: this.rectPadding,
                     velocity: this.rectVelocity
@@ -208,19 +225,13 @@ var Rectangle = (function() {
 
         _options = options || {};
 
-        this.width = 0;
-        this.height = 0;
+        this.width = _options.width || 0;
+        this.height = _options.height || 0;
         this.color = config.colors.green;
-        this.angle = 0;
-        this.padding = 0;
-        this.velocity = 0.05;
-        this.c = {};
-
-        for(o in options) {
-            if(Reflect.has(this, o)) {
-                Reflect.set(this, o, options[o]);
-            }
-        }
+        this.angle = _options.angle || 0;
+        this.padding = _options.padding || 0;
+        this.velocity = _options.velocity || 0.05;
+        this.circle = {};
     }
 
     Rectangle.prototype.update = function() {
@@ -233,9 +244,9 @@ var Rectangle = (function() {
         ctx.fillStyle = this.color;
         
         ctx.save();
-        ctx.translate(this.c.x, this.c.y);
+        ctx.translate(this.circle.x, this.circle.y);
         ctx.rotate(this.angle * (Math.PI / 180));
-        ctx.rect(-(this.width + this.c.radius + this.padding), -this.height / 2, this.width, this.height);
+        ctx.rect(-(this.width + this.circle.radius + this.padding), -this.height / 2, this.width, this.height);
         ctx.restore();
         ctx.fill();
         ctx.closePath();
@@ -258,28 +269,34 @@ function animate() {
 
     window.requestAnimationFrame(animate);
 
-    var mainArray = new Uint8Array(analyser.frequencyBinCount);
-    var bassArray = new Uint8Array(bassAnalyser.frequencyBinCount);
-    analyser.getByteFrequencyData(mainArray);
-    bassAnalyser.getByteFrequencyData(bassArray);
+    if(mainArray.length > 0 && bassArray.length > 0) {
+        mainArray = new Uint8Array(analyser.frequencyBinCount);
+        bassArray = new Uint8Array(bassAnalyser.frequencyBinCount);
+        analyser.getByteFrequencyData(mainArray);
+        bassAnalyser.getByteFrequencyData(bassArray);
 
-    c.setBassAmount(bassArray[1] / 3);
-    c.update();
+        c.setBassAmount(bassArray[1] / 3);
+        c.update();
 
-    var bassPercentage = 0;
+        var bassPercentage = 0;
 
-    if((bassArray[0] / 2.2) / 30 < 1) {
-        bassPercentage = (bassArray[0] / 2.2) / 30;
+        if((bassArray[0] / 2.2) / 30 < 1) {
+            bassPercentage = (bassArray[0] / 2.2) / 30;
+        }
+        else {
+            bassPercentage = 1;
+        }
+
+        c.color = blendColor(config.colors.green, config.colors.red, bassPercentage);
+        c.bars.left.forEach((b, i) => {
+            b.width = mainArray[i];
+            b.update();
+        });
+        c.bars.right.forEach((b, i) => {
+            b.width = mainArray[i];
+            b.update();
+        });
     }
-    else {
-        bassPercentage = 1;
-    }
-
-    c.color = blendColor(config.colors.green, config.colors.red, bassPercentage);
-    c.bars.forEach((b, i) => {
-        b.width = mainArray[i];
-        b.update();
-    });
 }
 
 
