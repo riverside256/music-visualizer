@@ -31,13 +31,14 @@ audio {
     width: 100%;
 }
 
-.audio-settings__opener {
+.floating-button {
     position: absolute;
     right: 0;
     width: 70px;
     height: 70px;
     background: #273652;
     color: #fff;
+    display: block;
     text-align: center;
     line-height: 70px;
     cursor: pointer;
@@ -45,14 +46,23 @@ audio {
     border-radius: 50%;
     transition: transform .1s ease-in-out;
 }
-.audio-settings__opener .fa {
+
+.floating-button--top {
+    top: 20px;
+}
+
+.floating-button--left {
+    left: 20px;
+}
+
+.floating-button .fa {
     transition: transform .1s ease-in-out;
 }
 
-.audio-settings__opener:hover .fa {
+.floating-button:hover .fa {
     transform: scale(1.2);
 }
-.audio-settings__opener:active {
+.floating-button:active {
     transform: scale(0.8);
 }
 
