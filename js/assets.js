@@ -71,3 +71,24 @@ var isTarget = function(e, selector) {
     var r = new RegExp(selector, "g");
     return e.path.filter(t => r.test(t.className)).length > 0;
 }
+
+
+
+
+
+
+
+
+/**
+ * changing time in seconds to readable time
+ * @param {number} seconds - seconds
+ * @returns {string} formatted time, for example 09:12
+ */
+var readableDuration = function(seconds) {
+    sec = Math.floor( seconds );    
+    min = Math.floor( sec / 60 );
+    min = min >= 10 ? min : '0' + min;    
+    sec = Math.floor( sec % 60 );
+    sec = sec >= 10 ? sec : '0' + sec;    
+    return min + ':' + sec;
+}

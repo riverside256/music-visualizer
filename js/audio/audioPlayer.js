@@ -67,6 +67,7 @@ function AudioPlayer(selector, options) {
             _p.controls.sliderWrapper.slider.label = `${readableDuration(_self.audio.currentTime)}/${readableDuration(_self.audio.duration)}`;
             _p.controls.sliderWrapper.slider.value = _self.audio.currentTime;
             _p.controls.sliderWrapper.slider.update();
+            _self.playList.activeTrack.update(_self.audio.currentTime);
 
             if(_self.audio.currentTime == _self.audio.duration) {
                 _self.pause();
@@ -102,10 +103,15 @@ function AudioPlayer(selector, options) {
      * initialize audio data
      */
     var initAudioPlayer = function() {
-        _self.audio = new Audio(_self.playList.activeTrack.fullPath);
-        _self.audio.autoplay = _self.autoplay;
-
+        
         _p.playerPlaylist = _self.playList.createAudioPlayList();
+
+        if(!_self.playList.activeTrack.audio) {
+            return false;
+        }
+
+        _self.audio = _self.playList.activeTrack.audio;
+        _self.audio.autoplay = _self.autoplay;
 
         _self.playList.onTrackChange = function(t) {
             _self.pause();
@@ -228,10 +234,6 @@ function AudioPlayer(selector, options) {
         _self.setWidth(_self.width);
 
 
-        if(_self.playList.tracks.length == 0) {
-            _p.nav.title.innerText = "You need to add tracks to your playlist";
-        }
-
 
         _p.controls.sliderWrapper.slider = new Slider(".audio-player__slider", {
             label: `00:00/00:00`,
@@ -239,6 +241,10 @@ function AudioPlayer(selector, options) {
             disabled: true
         });
 
+        if(_self.playList.tracks.length == 0) {
+            _p.nav.title.innerText = "You need to add tracks to your playlist";
+            return false;
+        }
 
         _self.audio.addEventListener("error", function() {
             _p.nav.title.innerHTML = `Track called '${_self.playList.activeTrack.trackName}' not exists`;
@@ -334,21 +340,6 @@ function AudioPlayer(selector, options) {
 
             _self.audioOnLoad(_self.audio);
         });
-    }
-
-
-    /**
-     * changing time in seconds to readable time
-     * @param {number} seconds - seconds
-     * @returns {string} formatted time, for example 09:12
-     */
-    var readableDuration = function(seconds) {
-        sec = Math.floor( seconds );    
-        min = Math.floor( sec / 60 );
-        min = min >= 10 ? min : '0' + min;    
-        sec = Math.floor( sec % 60 );
-        sec = sec >= 10 ? sec : '0' + sec;    
-        return min + ':' + sec;
     }
 
 

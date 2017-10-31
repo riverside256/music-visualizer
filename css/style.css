@@ -81,6 +81,16 @@ audio {
     border-bottom: none;
 }
 
+.settings-pane__content {
+    position: relative;
+    width: 100%;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+}
+
 .settings-pane h2 {
     padding: 15px 20px;
     padding-top: 0;
@@ -98,6 +108,24 @@ audio {
     min-width: 70px;
     max-width: 100px;
     padding: 0 10px;
+}
+
+
+
+
+
+.color-picker {
+    flex: 1 1 auto;
+    position: relative;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 

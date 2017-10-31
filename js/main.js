@@ -138,7 +138,7 @@ var Circle = (function() {
         this.x = _options.x || 0;
         this.y = _options.y || 0;
         this.radius = _options.radius || 0;
-        this.color = config.colors.green;
+        this.color = config.colors.first;
         this.lineWidth = _options.lineWidth || 0;
         this.barsCount = _options.barsCount || 0;
         this.bassAmount = _options.bassAmount || 0;
@@ -177,7 +177,7 @@ var Circle = (function() {
                     circle: c,
                     height: 3,
                     angle: i * (180 / this.barsCount),
-                    color: blendColor(config.colors.red, config.colors.green, i / this.barsCount),
+                    color: blendColor(config.colors.second, config.colors.first, i / this.barsCount),
                     padding: this.rectPadding,
                     velocity: this.rectVelocity
                 })
@@ -187,7 +187,7 @@ var Circle = (function() {
                     circle: c,
                     height: 3,
                     angle: 180 + (i * (180 / this.barsCount)),
-                    color: blendColor(config.colors.red, config.colors.green, i / this.barsCount),
+                    color: blendColor(config.colors.second, config.colors.first, i / this.barsCount),
                     padding: this.rectPadding,
                     velocity: this.rectVelocity
                 })
@@ -227,7 +227,7 @@ var Rectangle = (function() {
 
         this.width = _options.width || 0;
         this.height = _options.height || 0;
-        this.color = _options.color || config.colors.green;
+        this.color = _options.color || config.colors.first;
         this.angle = _options.angle || 0;
         this.padding = _options.padding || 0;
         this.velocity = _options.velocity || 0.05;
@@ -287,7 +287,7 @@ function animate() {
             bassPercentage = 1;
         }
 
-        c.color = blendColor(config.colors.green, config.colors.red, bassPercentage);
+        c.color = blendColor(config.colors.first, config.colors.second, bassPercentage);
         c.bars.left.forEach((b, i) => {
             b.width = mainArray[i];
             b.update();

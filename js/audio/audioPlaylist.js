@@ -41,7 +41,7 @@ function AudioPlayList(options) {
         _playList.header.closeBtn = document.createElement("button");
 
         _playList.content.wrapper = document.createElement("div");
-        _playList.content.table = document.createElement("table");
+        _playList.content.table = document.createElement("div");
 
 
 
@@ -52,6 +52,7 @@ function AudioPlayList(options) {
         _playList.header.closeBtn.classList.add("button");
 
         _playList.content.wrapper.classList.add("audio-playlist__content");
+        _playList.content.table.classList.add("audio-playlist__table");
 
 
 
@@ -60,42 +61,40 @@ function AudioPlayList(options) {
         _playList.header.closeBtn.innerHTML = `<i class="fa fa-times"></i>`;
         
         _playList.content.table.innerHTML = `
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Track name</th>
-                    <th>Extension</th>
-                    <th>Folder</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
+            <div class="audio-playlist__table__row audio-playlist__table__row--header">
+                <div class="audio-playlist__table__cell">ID</div>
+                <div class="audio-playlist__table__cell">Track name</div>
+                <div class="audio-playlist__table__cell">Extension</div>
+                <div class="audio-playlist__table__cell">Folder</div>
+                <div class="audio-playlist__table__cell">Duration</div>
+            </div>
         `;
 
-        this.tracks.forEach(t => {
-            var x = t.trackNode;
-            x.addEventListener("click", function() {
-                _self.setPlayingTrack(t);
-            }, false);
-            _trackElements.push(x);
-            _playList.content.table.querySelector("tbody").appendChild(x);
-        });
+        if(this.tracks.length > 0) {
+            this.tracks.forEach(t => {
+                var x = t.trackNode;
+                x.addEventListener("click", function() {
+                    _self.setPlayingTrack(t);
+                }, false);
+                _trackElements.push(x);
+                _playList.content.table.appendChild(x);
+            });
 
 
 
-        _playList.header.closeBtn.addEventListener("click", _self.closePlayList.bind(this), false);
+            _playList.header.closeBtn.addEventListener("click", _self.closePlayList.bind(this), false);
 
 
-        _playList.header.wrapper.appendChild(_playList.header.title);
-        _playList.header.wrapper.appendChild(_playList.header.closeBtn);
+            _playList.header.wrapper.appendChild(_playList.header.title);
+            _playList.header.wrapper.appendChild(_playList.header.closeBtn);
 
-        _playList.content.wrapper.appendChild(_playList.content.table);
-
-
-
-        _playList.wrapper.appendChild(_playList.header.wrapper);
-        _playList.wrapper.appendChild(_playList.content.wrapper);
+            _playList.content.wrapper.appendChild(_playList.content.table);
 
 
+
+            _playList.wrapper.appendChild(_playList.header.wrapper);
+            _playList.wrapper.appendChild(_playList.content.wrapper);
+        }
 
         return _playList.wrapper;
     }

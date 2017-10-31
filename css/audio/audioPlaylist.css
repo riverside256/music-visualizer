@@ -34,38 +34,52 @@
 }
 
 
-.audio-playlist__content table {
-    border-collapse: collapse;
+.audio-playlist__table {
     position: relative;
     width: 100%;
-    text-align: left;
+    display: table;
+    border-collapse: collapse;
 }
 
 
-.audio-playlist__content table tr {
+.audio-playlist__table__row {
+    position: relative;
     border-bottom: 1px solid rgba(255,255,255,0.2);
+    display: table-row;
+}
+.audio-playlist__table__row.audio-playlist__table__row--header {
+    font-weight: 700;
 }
 
-.audio-playlist__content table tbody tr {
+.audio-playlist__table__cell {
+    display: table-cell;
+    padding: 20px;
+}
+
+.track-node {
     cursor: pointer;
 }
 
-.audio-playlist__content table tbody tr.track-node--active {
+.track-node.track-node--active {
     color: #76FF03;
 }
 
-.audio-playlist__content table tbody tr:last-child {
+.track-node:last-child {
     border: none;
 } 
 
-.audio-playlist__content table tbody tr:hover {
-    background: rgba(255,255,255,.1);
+.track-node:hover {
+    background-color: rgba(255,255,255,.1) !important;
 }
 
 
-
-.audio-playlist__content table th, td {
-    padding: 20px;
+.track-node .track-node__progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 20%;
+    background: #76FF03;
 }
 
 
