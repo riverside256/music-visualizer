@@ -3,7 +3,7 @@ Simple music visualization cerated in HTML5 Canvas
 
 
 ## Table of contents
-[1. Setup](#setup)
+[1. Setup](#setup)  
 [2. What's new?](#whats-new)   
 [3. TODOS](#todos)  
 
