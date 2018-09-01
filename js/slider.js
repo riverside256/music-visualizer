@@ -38,8 +38,9 @@ function Slider(selector, options) {
     this.min = _options.min || 0;
     this.max = _options.max || 1;
     this.value = _options.value || this.min;
-    this.rounded = (typeof _options.rounded == "undefined") ? true : _options.rounded;
     this.direction = _options.direction || VERTICAL;
+    this.unit = _options.unit || "number";
+    this.rounded = (typeof _options.rounded == "undefined") ? true : _options.rounded;
     this.disabled = (typeof(_options.disabled) == "undefined") ? false : _options.disabled;
     this.callBacks = [];
 
@@ -70,14 +71,32 @@ function Slider(selector, options) {
     }
 
     this.update = function() {
+        switch(_self.unit) {
+            case "number":
+                _s.thumb.setAttribute("title", (_self.rounded == true) ? Math.floor(_self.value) : _self.value.toFixed(2));
+                break;
+            case "time":
+                _s.thumb.setAttribute("title", readableDuration(_self.value));
+                break;
+            default:
+                throw new Error("Unrecognized time unit '"+ _self.unit +"'");
+        }
         initSlider();
     }
 
+
+    this.disable = function() {
+        this.disabled = true;
+        this.getElement("wrapper").classList.add("slider--disabled");
+        manageSlider();
+        this.update();
+    }
 
     this.enable = function() {
         this.disabled = false;
         this.getElement("wrapper").classList.remove("slider--disabled");
         manageSlider();
+        this.update();
     }
 
 
@@ -104,6 +123,17 @@ function Slider(selector, options) {
         _s.stripe.classList.add("slider__stripe");
         _s.filling.classList.add("slider__filling");
         _s.thumb.classList.add("slider__thumb");
+
+        switch(_self.unit) {
+            case "number":
+                _s.thumb.setAttribute("title", (_self.rounded == true) ? Math.floor(_self.value) : _self.value.toFixed(2));
+                break;
+            case "time":
+                _s.thumb.setAttribute("title", readableDuration(_self.value));
+                break;
+            default:
+                throw new Error("Unrecognized time unit '"+ _self.unit +"'");
+        }
 
         if(_self.disabled) {
             _s.wrapper.classList.add("slider--disabled");
@@ -195,6 +225,16 @@ function Slider(selector, options) {
 
                     _self.value = (_percentage * (_self.max - _self.min)) + _self.min;
                     _self.setLabel((_self.rounded == true) ? Math.floor(_self.value) : _self.value.toFixed(2));
+                    switch(_self.unit) {
+                        case "number":
+                            _s.thumb.setAttribute("title", (_self.rounded == true) ? Math.floor(_self.value) : _self.value.toFixed(2));
+                            break;
+                        case "time":
+                            _s.thumb.setAttribute("title", readableDuration(_self.value));
+                            break;
+                        default:
+                            throw new Error("Unrecognized time unit '"+ _self.unit +"'");
+                    }
                     isLabelChanging(true);
 
                     _self.callBacks.forEach(c => c(_self.value));

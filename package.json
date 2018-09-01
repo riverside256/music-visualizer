@@ -1,0 +1,22 @@
+{
+  "name": "music-visualizer",
+  "version": "0.4.0",
+  "description": "Simple music visualization cerated in HTML5 Canvas",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tobiaszpiwowarczyk/music-visualizer.git"
+  },
+  "author": "Tobiasz Piwowarczyk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tobiaszpiwowarczyk/music-visualizer/issues"
+  },
+  "homepage": "https://github.com/tobiaszpiwowarczyk/music-visualizer#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}

@@ -59,6 +59,17 @@ Array.prototype.filter = function(callback) {
 
 
 
+/**
+ * Represents the ES6 forEach function
+ * @param {function} callback - the callback function
+ */
+Array.prototype.forEach = function(callback) {
+  for(var i = 0; i < this.length; i++) {
+    callback(this[i], i, this);
+  }
+}
+
+
 
 
 /**

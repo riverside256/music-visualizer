@@ -23,8 +23,7 @@ function varsInit() {
 
     ap = new AudioPlayer(".audio-player", {
         width: sc.data.playerWidth,
-        autoplay: config.player.autoplay,
-        trackList: config.trackList
+        autoplay: config.player.autoplay
     });
 
     ap.audioOnLoad = function(x) {
@@ -175,7 +174,6 @@ var Circle = (function() {
             this.bars.left.push(
                 new Rectangle({
                     circle: c,
-                    height: 3,
                     angle: i * (180 / this.barsCount),
                     color: blendColor(config.colors.second, config.colors.first, i / this.barsCount),
                     padding: this.rectPadding,
@@ -185,7 +183,6 @@ var Circle = (function() {
             this.bars.right.push(
                 new Rectangle({
                     circle: c,
-                    height: 3,
                     angle: 180 + (i * (180 / this.barsCount)),
                     color: blendColor(config.colors.second, config.colors.first, i / this.barsCount),
                     padding: this.rectPadding,
@@ -225,8 +222,8 @@ var Rectangle = (function() {
 
         _options = options || {};
 
-        this.width = _options.width || 0;
-        this.height = _options.height || 0;
+        this.width = 0;
+        this.height = _options.height || 3;
         this.color = _options.color || config.colors.first;
         this.angle = _options.angle || 0;
         this.padding = _options.padding || 0;
@@ -268,6 +265,9 @@ function animate() {
     ctx.fillRect(0,0, c_width, c_height);
 
     window.requestAnimationFrame(animate);
+
+    var generatedAngle = random(0, 360);
+
 
     if(mainArray.length > 0 && bassArray.length > 0) {
         mainArray = new Uint8Array(analyser.frequencyBinCount);

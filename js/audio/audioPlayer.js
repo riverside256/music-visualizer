@@ -22,9 +22,7 @@ function AudioPlayer(selector, options) {
     this.audio = {};
     this.width = _options.width || config.player.width;
     this.autoplay = (typeof _options.autoplay == "undefined") ? false : _options.autoplay;
-    this.playList = new AudioPlayList({
-        tracks: _options.trackList
-    });
+    this.playList = new AudioPlayList();
 
     this.audioOnLoad = function() {};
 
@@ -33,7 +31,7 @@ function AudioPlayer(selector, options) {
     window.addEventListener("keypress", function(e) {
         var k = e.keyCode || e.which;
 
-        if(e.key == " ") {
+        if(e.key == " " && !isTarget(e, "playBtn")) {
             if(_self.audio.paused) {
                 _self.play();
             }
@@ -48,7 +46,9 @@ function AudioPlayer(selector, options) {
 
 
 
-
+    /**
+     * Function for pausing audio track.
+     */
     AudioPlayer.prototype.pause = function() {
         clearInterval(_sliderInterval);
         _p.controls.playBtn.innerHTML = "<i class='fa fa-play'></i>";
@@ -103,22 +103,28 @@ function AudioPlayer(selector, options) {
      * initialize audio data
      */
     var initAudioPlayer = function() {
-        
+
         _p.playerPlaylist = _self.playList.createAudioPlayList();
 
-        if(!_self.playList.activeTrack.audio) {
-            return false;
-        }
+        _self.playList.onPlayListReady(function() {
 
-        _self.audio = _self.playList.activeTrack.audio;
-        _self.audio.autoplay = _self.autoplay;
+            if(!this.activeTrack.audio) {
+                createAudioPlayer();
+                return false;
+            }
 
-        _self.playList.onTrackChange = function(t) {
-            _self.pause();
-            _self.audio = new Audio(t.fullPath);
-            _self.audio.autoplay = true;
+            _self.audio = this.activeTrack.audio;
+            _self.audio.autoplay = _self.autoplay;
+
             createAudioPlayer();
-        };
+
+            this.onTrackChange(function() {
+                _self.audio.pause();
+                _self.audio = new Audio(this.activeTrack.fullPath);
+                _self.audio.autoplay = true;
+                manageAudioPlayer();
+            });
+        });
     }
 
 
@@ -179,18 +185,18 @@ function AudioPlayer(selector, options) {
         // adding classes
         _p.nav.wrapper.classList.add("audio-player__box");
         _p.nav.title.classList.add("audio-player__title");
-        _p.nav.prevBtn.classList.add("button", "button--disabled");
-        _p.nav.nextBtn.classList.add("button", "button--disabled");
+        _p.nav.prevBtn.classList.add("button", "prevBtn", "button--disabled");
+        _p.nav.nextBtn.classList.add("button", "nextBtn", "button--disabled");
 
         _p.controls.wrapper.classList.add("audio-player__box");
 
-        _p.controls.playBtn.classList.add("button", "button--disabled");
-        _p.controls.playListBtn.classList.add("button", "button--disabled");
+        _p.controls.playBtn.classList.add("button", "playBtn", "button--disabled");
+        _p.controls.playListBtn.classList.add("button", "playListBtn", "button--disabled");
         
         _p.controls.sliderWrapper.elem.classList.add("audio-player__slider");
 
         _p.controls.volume.wrapper.classList.add("audio-player__volume");
-        _p.controls.volume.button.classList.add("button", "button--disabled");
+        _p.controls.volume.button.classList.add("button", "volumeBtn", "button--disabled");
         _p.controls.volume.sliderWrapper.classList.add("audio-player__volume__slider");
 
 
@@ -233,14 +239,29 @@ function AudioPlayer(selector, options) {
 
         _self.setWidth(_self.width);
 
-
-
         _p.controls.sliderWrapper.slider = new Slider(".audio-player__slider", {
             label: `00:00/00:00`,
             direction: HORIZONTAL,
-            disabled: true
+            disabled: true,
+            unit: "time"
         });
 
+        _p.controls.volume.slider = new Slider(".audio-player__volume__slider", {
+            label: _self.audio.volume,
+            min: 0,
+            max: 1,
+            value: 1,
+            rounded: false
+        });
+
+        manageAudioPlayer();
+    }
+
+
+
+
+    var manageAudioPlayer = function() {
+        
         if(_self.playList.tracks.length == 0) {
             _p.nav.title.innerText = "You need to add tracks to your playlist";
             return false;
@@ -256,59 +277,59 @@ function AudioPlayer(selector, options) {
             _p.controls.playListBtn.classList.remove("button--disabled");
             _p.controls.volume.button.classList.remove("button--disabled");
 
+
+            _p.controls.playBtn.setAttribute("title", "Play");
+            _p.controls.playListBtn.setAttribute("title", "Playlist");
+            _p.controls.volume.button.setAttribute("title", "Volume " + _self.audio.volume);
+
+
             _p.nav.title.classList.add("audio-player__title");
             _p.nav.title.innerText = _self.playList.activeTrack.trackName;
 
 
             if(!_self.playList.activeTrack.isFirst) {
                 _p.nav.prevBtn.classList.remove("button--disabled");
-                _p.nav.prevBtn.addEventListener("click", function() {
-                    _self.playList.prev();
-                }, false);
+                _p.nav.prevBtn.addEventListener("click", _self.playList.prev, false);
+                _p.nav.prevBtn.setAttribute("title", "Previous track");
             }
 
             if(!_self.playList.activeTrack.isLast) {
                 _p.nav.nextBtn.classList.remove("button--disabled");
-                _p.nav.nextBtn.addEventListener("click", function() {
-                    _self.playList.next();
-                }, false);
+                _p.nav.nextBtn.addEventListener("click", _self.playList.next, false);
+                _p.nav.nextBtn.setAttribute("title", "Next track");
             }
 
 
-            _p.controls.playBtn.addEventListener("click", function() {
-                if(_self.audio.paused) {
-                    _self.play();
-                }
-                else {
-                    _self.pause();
-                }
-            }, false);
+            _p.controls.playBtn.onclick = function() {
+                _self.audio.paused ? _self.play() : _self.pause();
+                this.setAttribute("title", _self.audio.paused ? "Play": "Pause");
+            };
 
-            _p.controls.playListBtn.addEventListener("click", function() {
+            _p.controls.playListBtn.onclick = function() {
                 _self.playList.togglePlayList();
-            }, false);
+            };
 
 
 
-            _p.controls.volume.button.addEventListener("click", function() {
+            _p.controls.volume.button.onclick = function() {
                 _p.controls.volume.sliderWrapper.classList.toggle("audio-player__volume__slider--shown");
-            }, false);
+            };
 
 
             document.body.addMultiEventListener("click keyup", function(e) {
                 var k = e.keyCode || e.which;
 
-                if(k == 27 || (!isTarget(e, "audio-player__volume__slider") && !isTarget(e, "button"))) {
+                if(k == 27 || (!isTarget(e, "audio-player__volume__slider") && !isTarget(e, "volumeBtn"))) {
                     _p.controls.volume.sliderWrapper.classList.remove("audio-player__volume__slider--shown");
                 }
 
-                if(k == 27 || (!isTarget(e, "audio-playlist") && !isTarget(e, "button"))) {
+                if(k == 27 || (!isTarget(e, "audio-playlist") && !isTarget(e, "playListBtn"))) {
                     _self.playList.closePlayList();
                 }
 
             });
 
-            _p.controls.sliderWrapper.slider.label = `${readableDuration(_self.audio.currentTime)}/${readableDuration(_self.audio.duration || 0)}`;
+            _p.controls.sliderWrapper.slider.label = `${readableDuration(_self.audio.currentTime)}/${readableDuration(_self.audio.duration != null ? _self.audio.duration : 0)}`;
             _p.controls.sliderWrapper.slider.max = _self.audio.duration;
             _p.controls.sliderWrapper.slider.value = _self.audio.currentTime;
             _p.controls.sliderWrapper.slider.enable();
@@ -320,29 +341,22 @@ function AudioPlayer(selector, options) {
                 _p.controls.sliderWrapper.slider.update();
             });
 
-
-            _p.controls.volume.slider = new Slider(".audio-player__volume__slider", {
-                label: _self.audio.volume,
-                min: 0,
-                max: 1,
-                value: _self.audio.volume,
-                rounded: false
-            });
-
+            _self.audio.volume = _p.controls.volume.slider.value;
             _p.controls.volume.slider.addOnChange(function(e) {
                 _self.audio.volume = e;
                 _p.controls.volume.slider.label = _self.audio.volume.toFixed(2);
-            }, false);
+                _p.controls.volume.button.setAttribute("title", "Volume " + _self.audio.volume);
+            });
 
-            if(this.autoplay) {
-                _self.play();
-            }
+            if(this.autoplay) _self.play();
 
             _self.audioOnLoad(_self.audio);
         });
     }
 
 
+
+
+
     initAudioPlayer();
-    createAudioPlayer();
 }

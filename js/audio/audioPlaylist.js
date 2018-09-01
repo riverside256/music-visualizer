@@ -22,17 +22,28 @@ function AudioPlayList(options) {
 
 
 
-    this.tracks = _options.tracks || [];
+    this.tracks = [];
     this.activeTrack = {};
     this.shown = false;
+    this.callbacks = {
+        onPlayListReady: [],
+        onTrackChange: []
+    };
 
 
-    this.onTrackChange = function(x) {}
+    AudioPlayList.prototype.onTrackChange = function(callback) {
+        this.callbacks.onTrackChange.push(callback);
+    }
 
+    AudioPlayList.prototype.onPlayListReady = function(callback) {
+        this.callbacks.onPlayListReady.push(callback);
+    }
 
 
     
     AudioPlayList.prototype.createAudioPlayList = function() {
+
+        initAudioPlayList();
 
         _playList.wrapper = document.createElement("div");
 
@@ -56,6 +67,9 @@ function AudioPlayList(options) {
 
 
 
+        _playList.header.closeBtn.setAttribute("title", "Close playlist");
+
+
 
         _playList.header.title.innerText = "Playlist";
         _playList.header.closeBtn.innerHTML = `<i class="fa fa-times"></i>`;
@@ -70,7 +84,22 @@ function AudioPlayList(options) {
             </div>
         `;
 
-        if(this.tracks.length > 0) {
+        this.onPlayListReady(function() {
+
+
+
+            if(this.tracks.length == 0) {
+                for(var k in sc.sliders) {
+                    if(k != "addMultiEventListener") {
+                        sc.sliders[k].disable();
+                    }
+                }
+                return false;
+            }
+
+
+
+
             this.tracks.forEach(t => {
                 var x = t.trackNode;
                 x.addEventListener("click", function() {
@@ -94,7 +123,7 @@ function AudioPlayList(options) {
 
             _playList.wrapper.appendChild(_playList.header.wrapper);
             _playList.wrapper.appendChild(_playList.content.wrapper);
-        }
+        });
 
         return _playList.wrapper;
     }
@@ -109,7 +138,7 @@ function AudioPlayList(options) {
         this.activeTrack = track;
         this.tracks.forEach(t => t.setPlaying(false));
         this.tracks[this.tracks.indexOf(track)].setPlaying(true);
-        this.onTrackChange(track);
+        this.callbacks.onTrackChange.forEach(c => c.apply(_self, null));
     }
 
 
@@ -146,13 +175,13 @@ function AudioPlayList(options) {
 
 
     AudioPlayList.prototype.next = function() {
-        this.setPlayingTrack(this.tracks[this.tracks.indexOf(this.activeTrack) + 1]);
+        _self.setPlayingTrack(_self.tracks[_self.tracks.indexOf(_self.activeTrack) + 1]);
     }
 
 
 
     AudioPlayList.prototype.prev = function() {
-        this.setPlayingTrack(this.tracks[this.tracks.indexOf(this.activeTrack) - 1]);
+        _self.setPlayingTrack(_self.tracks[_self.tracks.indexOf(_self.activeTrack) - 1]);
     }
 
 
@@ -163,19 +192,27 @@ function AudioPlayList(options) {
 
 
     var initAudioPlayList = function() {
-        if(_self.tracks.length > 0) {
-            for(var i = 0; i < _self.tracks.length; i++) {
-                _self.tracks[i] = new AudioTrackNode({
-                    id: i + 1,
-                    fullPath: "audio/" + _self.tracks[i],
-                    playing: i == 0,
-                    isFirst: i == 0,
-                    isLast: i == (_self.tracks.length - 1)
-                });
-            }
-            _self.setPlayingTrack(_self.tracks[0]);
-        }
-    }
+        var xhr = new XMLHttpRequest();
 
-    initAudioPlayList();
+        xhr.open("GET", "http://localhost:5500/tracks", true);
+        xhr.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                var tracks = JSON.parse(xhr.response);
+                for(var i = 0; i < tracks.length; i++) {
+                    _self.tracks[i] = new AudioTrackNode({
+                        id: i + 1,
+                        fullPath: "audio/" + tracks[i],
+                        playing: i == 0,
+                        isFirst: i == 0,
+                        isLast: i == (tracks.length - 1)
+                    });
+                }
+                if(_self.tracks.length > 0) {
+                    _self.setPlayingTrack(_self.tracks[0]);
+                }
+                _self.callbacks.onPlayListReady.forEach(c => c.apply(_self, null));
+            }
+        }
+        xhr.send();
+    }
 }

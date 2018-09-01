@@ -96,7 +96,7 @@
     width: 10px;
     height: 130px;
     min-height: 130px;
-    margin: 10px auto;
+    margin: 20px auto;
 }
 .slider--vertical .slider__stripe .slider__filling {
     width: 100%;
@@ -104,6 +104,5 @@
     bottom: 0;
 }
 .slider--vertical .slider__label {
-    padding: 10px 0;
     min-width: 70px;
 }

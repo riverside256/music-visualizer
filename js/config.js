@@ -1,5 +1,4 @@
 let config = {
-    trackList: [],
     colors: {
         first: "#76FF03",
         second: "#f44336"

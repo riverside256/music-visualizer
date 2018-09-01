@@ -47,6 +47,7 @@ function AudioTrackNode(options) {
 
         _self.trackNode = document.createElement("div");
         _self.trackNode.classList.add("audio-playlist__table__row", "track-node");
+        _self.trackNode.setAttribute("title", _self.trackName);
 
 
         _self.audio.addEventListener("loadeddata", function() {

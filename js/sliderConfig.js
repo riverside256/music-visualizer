@@ -54,8 +54,7 @@ SliderConfig.prototype.initSliders = function() {
         label: "Bars count",
         min: 100,
         max: 300,
-        value: _self.data.barsCount,
-        disabled: config.trackList.length == 0
+        value: _self.data.barsCount
     });
     this.getSlider("barsCount").addOnChange(function(e) {
         _self.data.barsCount = Math.floor(e);
@@ -69,13 +68,14 @@ SliderConfig.prototype.initSliders = function() {
         label: "Max Decibels",
         min: -30,
         max: 0,
-        value: _self.data.maxDecibels,
-        disabled: config.trackList.length == 0
+        value: _self.data.maxDecibels
     });
     this.getSlider("maxDecibels").addOnChange(function(e) {
         _self.data.maxDecibels = e;
-        _self.getSlider("minDecibels").max = e;
-        _self.getSlider("minDecibels").update();
+        if(e >= _self.getSlider("minDecibels").value) {
+            _self.getSlider("minDecibels").max = e;
+            _self.getSlider("minDecibels").update();
+        }
         _self.saveConfig();
     });
 
@@ -85,13 +85,14 @@ SliderConfig.prototype.initSliders = function() {
         label: "Min decibels",
         min: -100,
         max: 0,
-        value: _self.data.minDecibels,
-        disabled: config.trackList.length == 0
+        value: _self.data.minDecibels
     });
     this.getSlider("minDecibels").addOnChange(function(e) {
         _self.data.minDecibels = e;
-        _self.getSlider("maxDecibels").min = e;
-        _self.getSlider("maxDecibels").update();
+        if(e <= _self.getSlider("maxDecibels").value) {
+            _self.getSlider("maxDecibels").min = e;
+            _self.getSlider("maxDecibels").update();
+        }
         _self.saveConfig();
     });
 
@@ -101,8 +102,7 @@ SliderConfig.prototype.initSliders = function() {
         label: "Player width",
         min: 500,
         max: 950,
-        value: _self.data.playerWidth,
-        disabled: config.trackList.length == 0
+        value: _self.data.playerWidth
     });
     this.getSlider("playerWidth").addOnChange(function(e) {
         _self.data.playerWidth = e;
@@ -115,13 +115,14 @@ SliderConfig.prototype.initSliders = function() {
         label: "Space between circle and rectangles",
         min: 1,
         max: 20,
-        value: _self.data.rectPadding,
-        disabled: config.trackList.length == 0
+        value: _self.data.rectPadding
     });
     this.getSlider("rectPadding").addOnChange(function(e) {
         _self.data.rectPadding = e;
-        _self.getSlider("wheelLineWidth").max = e;
-        _self.getSlider("wheelLineWidth").update();
+        if(e >= _self.getSlider("wheelLineWidth").value) {
+            _self.getSlider("wheelLineWidth").max = e;
+            _self.getSlider("wheelLineWidth").update();
+        }
         _self.saveConfig();
     });
 
@@ -134,8 +135,7 @@ SliderConfig.prototype.initSliders = function() {
         min: 0,
         max: 1,
         value: _self.data.rectVelocity,
-        rounded: false,
-        disabled: config.trackList.length == 0
+        rounded: false
     });
     this.getSlider("rectVelocity").addOnChange(function(e) {
         _self.data.rectVelocity = e;
@@ -151,13 +151,15 @@ SliderConfig.prototype.initSliders = function() {
         label: "Wheel line width",
         min: 1,
         max: 10,
-        value: _self.data.wheelLineWidth,
-        disabled: config.trackList.length == 0
+        value: _self.data.wheelLineWidth
     });
     this.getSlider("wheelLineWidth").addOnChange(function(e) {
         _self.data.wheelLineWidth = e;
-        _self.getSlider("rectPadding").min = e;
-        _self.getSlider("rectPadding").update();
+        if(e <= _self.getSlider("rectPadding").value) {
+            _self.getSlider("rectPadding").min = e;
+            _self.getSlider("rectPadding").update();
+        }
+        console.log(_self.getSlider("rectPadding").min, _self.getSlider("rectPadding").value);
         _self.saveConfig();
     });
 
@@ -169,8 +171,7 @@ SliderConfig.prototype.initSliders = function() {
         label: "Wheel radius",
         min: 20,
         max: 70,
-        value: _self.data.wheelRadius,
-        disabled: config.trackList.length == 0
+        value: _self.data.wheelRadius
     });
     this.getSlider("wheelRadius").addOnChange(function(e) {
         _self.data.wheelRadius = e;
