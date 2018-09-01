@@ -14,6 +14,7 @@ Simple music visualization cerated in HTML5 Canvas
 mkdir music-visualizer
 cd music-visualizer
 git clone https://github.com/riverside256/music-visualizer.git
+npm install
 ```
 
 2. Put tracks into `audio` folder.
